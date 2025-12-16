@@ -9,7 +9,6 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }
 
   @MessagePattern('category.findAll')
-  @Auth()
   async findAll() {
     return this.categoriesService.findAll();
   }
