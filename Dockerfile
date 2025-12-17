@@ -10,6 +10,8 @@ COPY . .
 
 RUN npm run build
 
+RUN npx prisma generate
+
 # Production image
 FROM node:20-alpine
 
