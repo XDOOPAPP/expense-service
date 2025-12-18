@@ -1,28 +1,53 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  postgres:
+  expense-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fepa_expense_service
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      DATABASE_URL: postgres://expense_user:expense_password@expense-db:5432/fepa_expense?schema=public
+    depends_on:
+      expense-db:
+        condition: service_healthy
+    ports:
+      - '3002:3002'
+    command: >-
+      sh -c "npx prisma db push && node dist/main"
+    restart: unless-stopped
+
+  expense-db:
     image: postgres:17-alpine
     container_name: fepa_expense_db
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
       POSTGRES_DB: fepa_expense
+      POSTGRES_USER: expense_user
+      POSTGRES_PASSWORD: expense_password
+    volumes:
+      - expense-db-data:/var/lib/postgresql/data
     ports:
       - '5433:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U expense_user -d fepa_expense']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: fepa_pgadmin
+    container_name: fepa_expense_pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - '5050:80'
     depends_on:
-      - postgres
+      expense-db:
+        condition: service_started
 
 volumes:
-  postgres_data:
+  expense-db-data:
