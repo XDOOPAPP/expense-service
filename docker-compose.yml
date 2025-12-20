@@ -16,7 +16,7 @@ services:
     ports:
       - '3002:3002'
     command: >-
-      sh -c "npx prisma db push && node dist/main"
+      sh -c "npx prisma db push && node dist/src/main"
     restart: unless-stopped
 
   expense-db:
@@ -36,18 +36,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: fepa_expense_pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - '5050:80'
-    depends_on:
-      expense-db:
-        condition: service_started
 
 volumes:
   expense-db-data:
