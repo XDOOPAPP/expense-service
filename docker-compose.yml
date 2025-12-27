@@ -11,8 +11,8 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3002
-      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_expense
-      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+      - DATABASE_URL=postgresql://fepa:fepa123@fepa-postgres:5432/fepa_expense
+      - RABBITMQ_URL=amqp://fepa:fepa123@fepa-rabbitmq:5672
     depends_on:
       postgres:
         condition: service_healthy
