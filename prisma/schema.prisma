@@ -17,7 +17,13 @@ model Expense {
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @db.Timestamptz(6)
 
+  // OCR tracking fields
+  ocrJobId      String? @db.Uuid
+  isFromOcr     Boolean @default(false)
+  ocrConfidence Float?
+
   @@index([userId, spentAt])
+  @@index([ocrJobId])
 }
 
 model Category {
