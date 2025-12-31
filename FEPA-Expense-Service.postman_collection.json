@@ -1,0 +1,560 @@
+{
+    "info": {
+        "name": "FEPA - Expense Service",
+        "description": "Complete API collection for testing Expense Service",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@fepa.com\",\n  \"password\": \"test123\",\n  \"fullName\": \"Test User\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Verify OTP",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"token\", response.access_token);",
+                                    "    console.log(\"✅ Token saved:\", response.access_token.substring(0, 20) + \"...\");",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@fepa.com\",\n  \"otp\": \"123456\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/verify-otp",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "verify-otp"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"token\", response.access_token);",
+                                    "    console.log(\"✅ Token saved:\", response.access_token.substring(0, 20) + \"...\");",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@fepa.com\",\n  \"password\": \"test123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Expenses",
+            "item": [
+                {
+                    "name": "Create Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"description\": \"Lunch at restaurant\",\n  \"amount\": 150000,\n  \"category\": \"food\",\n  \"spentAt\": \"2025-12-31\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Expenses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses?page=1&limit=10",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "from",
+                                    "value": "2025-12-01",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "to",
+                                    "value": "2025-12-31",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "category",
+                                    "value": "food",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Expense Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses/summary",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                "summary"
+                            ],
+                            "query": [
+                                {
+                                    "key": "from",
+                                    "value": "2025-12-01",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "to",
+                                    "value": "2025-12-31",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Single Expense",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses/:expenseId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                ":expenseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "expenseId",
+                                    "value": "PASTE_EXPENSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Expense",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"description\": \"Updated description\",\n  \"amount\": 200000\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses/:expenseId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                ":expenseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "expenseId",
+                                    "value": "PASTE_EXPENSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Expense",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses/:expenseId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                ":expenseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "expenseId",
+                                    "value": "PASTE_EXPENSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get OCR Expenses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses?isFromOcr=true",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "isFromOcr",
+                                    "value": "true"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "OCR",
+            "item": [
+                {
+                    "name": "Scan Receipt",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"fileUrl\": \"https://via.placeholder.com/600x800/FFFFFF/000000?text=RECEIPT\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/ocr/scan",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ocr",
+                                "scan"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get OCR Jobs",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/ocr/jobs",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ocr",
+                                "jobs"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "completed",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get OCR Job Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/ocr/jobs/:jobId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ocr",
+                                "jobs",
+                                ":jobId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "jobId",
+                                    "value": "PASTE_JOB_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Example Workflows",
+            "item": [
+                {
+                    "name": "1. Create Food Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"description\": \"Coffee at Starbucks\",\n  \"amount\": 45000,\n  \"category\": \"food\",\n  \"spentAt\": \"2025-12-31\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Create Transport Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"description\": \"Grab to office\",\n  \"amount\": 35000,\n  \"category\": \"transport\",\n  \"spentAt\": \"2025-12-31\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Get December Expenses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses?from=2025-12-01&to=2025-12-31",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "from",
+                                    "value": "2025-12-01"
+                                },
+                                {
+                                    "key": "to",
+                                    "value": "2025-12-31"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Get Food Expenses Only",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses?category=food",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "food"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Get December Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expenses/summary?from=2025-12-01&to=2025-12-31",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "expenses",
+                                "summary"
+                            ],
+                            "query": [
+                                {
+                                    "key": "from",
+                                    "value": "2025-12-01"
+                                },
+                                {
+                                    "key": "to",
+                                    "value": "2025-12-31"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
