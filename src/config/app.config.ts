@@ -5,7 +5,7 @@ export const appConfig = () => ({
     url: process.env.DATABASE_URL,
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-secret-key',
+    secret: process.env.JWT_SECRET, // No default - must match auth-service
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
 });
