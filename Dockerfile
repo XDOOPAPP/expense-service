@@ -13,6 +13,9 @@ RUN npx prisma generate
 
 COPY . .
 
+# Force generate prisma client with the new schema
+RUN npx prisma generate
+
 RUN npm run build
 
 FROM node:20-alpine
@@ -30,4 +33,4 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3002
 
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/src/main.js"]
