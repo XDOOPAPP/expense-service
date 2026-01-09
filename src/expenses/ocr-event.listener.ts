@@ -48,7 +48,7 @@ export class OcrEventListener {
         const { jobId, userId, expenseData } = event;
 
         // Validate expense data
-        if (!expenseData.amount || expenseData.amount <= 0) {
+        if (expenseData.amount == null || expenseData.amount < 0) {
             throw new Error('Invalid amount from OCR result');
         }
 
