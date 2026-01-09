@@ -41,7 +41,7 @@ docker exec -it expense-service node prisma/seed.js
 
 ### Bước 1: Lấy Token (Login)
 *   **Method:** `POST`
-*   **URL:** `http://localhost:3000/api/v1/user/login` (hoặc `/auth/login`)
+*   **URL:** `http://localhost:3000/api/v1/user/login`
 *   **Body (JSON):**
     ```json
     {
@@ -54,8 +54,7 @@ docker exec -it expense-service node prisma/seed.js
 ### Bước 2: Tạo Chi Tiêu (Create Expense)
 *   **Method:** `POST`
 *   **URL:** `http://localhost:3000/api/v1/expenses`
-*   **Headers:** 
-    *   `Authorization`: `Bearer <Dán_Token_Vào_Đây>`
+*   **Headers:** `Authorization`: `Bearer <Token>`
 *   **Body (JSON):**
     ```json
     {
@@ -66,9 +65,36 @@ docker exec -it expense-service node prisma/seed.js
     }
     ```
 
-### Bước 3: Xem danh sách
+### Bước 3: Xem danh sách chi tiêu
 *   **Method:** `GET`
-*   **URL:** `http://localhost:3000/api/v1/expenses`
+*   **URL:** `http://localhost:3000/api/v1/expenses?page=1&limit=10`
+*   **Headers:** `Authorization`: `Bearer <Token>`
+
+### Bước 4: Xem báo cáo tổng hợp (Summary)
+*   **Method:** `GET`
+*   **URL:** `http://localhost:3000/api/v1/expenses/summary?from=2026-01-01&to=2026-01-31`
+*   **Headers:** `Authorization`: `Bearer <Token>`
+
+### Bước 5: Xem chi tiết một chi tiêu
+*   **Method:** `GET`
+*   **URL:** `http://localhost:3000/api/v1/expenses/<ID_CHI_TIEU>`
+*   **Headers:** `Authorization`: `Bearer <Token>`
+
+### Bước 6: Cập nhật chi tiêu
+*   **Method:** `PATCH`
+*   **URL:** `http://localhost:3000/api/v1/expenses/<ID_CHI_TIEU>`
+*   **Headers:** `Authorization`: `Bearer <Token>`
+*   **Body (JSON):**
+    ```json
+    {
+      "amount": 75000,
+      "description": "Ăn trưa (đã cập nhật)"
+    }
+    ```
+
+### Bước 7: Xóa chi tiêu
+*   **Method:** `DELETE`
+*   **URL:** `http://localhost:3000/api/v1/expenses/<ID_CHI_TIEU>`
 *   **Headers:** `Authorization`: `Bearer <Token>`
 
 ---
@@ -76,5 +102,5 @@ docker exec -it expense-service node prisma/seed.js
 ## 💡 Lưu ý quan trọng
 *   **Lỗi 500:** Nếu gặp lỗi này, hãy chạy lệnh `docker logs expense-service` để xem lỗi.
 *   **Cổng kết nối:** 
-    *   API Gateway: `3000` (Chúng ta dùng cổng này để test tập trung).
+    *   API Gateway: `3000` (Sử dụng để test tập trung).
     *   RabbitMQ: `http://localhost:15672` (fepa/fepa123).
