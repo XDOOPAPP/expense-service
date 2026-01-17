@@ -153,7 +153,7 @@ export class ExpensesService {
     query: SummaryExpenseDto,
     userId: string,
   ): Promise<Record<string, unknown>> {
-    const { from, to, groupBy } = query;
+    const { from, to, groupBy, category } = query;
 
     // Build where clause
     const where: Prisma.ExpenseWhereInput = {
@@ -166,6 +166,7 @@ export class ExpensesService {
             },
           }
         : {}),
+      ...(category ? { category } : {}),
     };
 
     // Get total and by category

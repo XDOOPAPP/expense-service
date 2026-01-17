@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsDateString, IsEnum } from 'class-validator';
+import { IsOptional, IsDateString, IsEnum, IsString } from 'class-validator';
 
 export enum GroupByPeriod {
   DAY = 'day',
@@ -33,4 +33,12 @@ export class SummaryExpenseDto {
   @IsOptional()
   @IsEnum(GroupByPeriod)
   groupBy?: GroupByPeriod;
+
+  @ApiPropertyOptional({
+    description: 'Filter expenses by category slug',
+    example: 'food',
+  })
+  @IsOptional()
+  @IsString()
+  category?: string;
 }
