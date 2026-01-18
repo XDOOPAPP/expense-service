@@ -49,4 +49,10 @@ export class ExpensesController {
     const { id, userId } = payload;
     return this.expensesService.remove(id, userId);
   }
+
+  // Admin endpoints
+  @MessagePattern('expense.admin_stats')
+  async getAdminStats() {
+    return this.expensesService.getAdminStats();
+  }
 }

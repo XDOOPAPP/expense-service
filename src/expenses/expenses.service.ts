@@ -296,4 +296,45 @@ export class ExpensesService {
       amount: parseFloat(expense.amount.toString()),
     };
   }
+
+  // ========== ADMIN METHODS ==========
+
+  async getAdminStats(): Promise<Record<string, unknown>> {
+    const [totalExpenses, totalAmount, byCategory, recentExpenses] = await Promise.all([
+      this.prisma.expense.count(),
+      this.prisma.expense.aggregate({
+        _sum: { amount: true },
+      }),
+      this.prisma.expense.groupBy({
+        by: ['category'],
+        _sum: { amount: true },
+        _count: true,
+        orderBy: { _sum: { amount: 'desc' } },
+        take: 10,
+      }),
+      this.prisma.expense.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+      }),
+    ]);
+
+    // Get unique users count
+    const uniqueUsers = await this.prisma.expense.groupBy({
+      by: ['userId'],
+    });
+
+    return {
+      totalExpenses,
+      totalAmount: totalAmount._sum.amount
+        ? parseFloat(totalAmount._sum.amount.toString())
+        : 0,
+      totalUsers: uniqueUsers.length,
+      byCategory: byCategory.map((item) => ({
+        category: item.category || 'uncategorized',
+        total: item._sum.amount ? parseFloat(item._sum.amount.toString()) : 0,
+        count: item._count,
+      })),
+      recentExpenses: recentExpenses.map((e) => this.transformExpense(e)),
+    };
+  }
 }
