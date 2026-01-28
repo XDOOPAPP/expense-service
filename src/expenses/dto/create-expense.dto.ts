@@ -43,4 +43,49 @@ export class CreateExpenseDto {
   })
   @IsDateString()
   spentAt: string;
+
+  @ApiProperty({
+    description: 'Receipt image URL (optional)',
+    example: 'https://example.com/receipt.jpg',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  receiptUrl?: string;
+
+  @ApiProperty({
+    description: 'Additional notes (optional)',
+    example: 'Business lunch',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @ApiProperty({
+    description: 'Location of expense (optional)',
+    example: 'Restaurant ABC',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @ApiProperty({
+    description: 'Payment method (cash, card, transfer)',
+    example: 'card',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  paymentMethod?: string;
+
+  @ApiProperty({
+    description: 'Tags for categorization',
+    example: ['lunch', 'work'],
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ each: true })
+  tags?: string[];
 }

@@ -6,6 +6,8 @@ import { PrismaService } from './prisma/prisma.service';
 import { appConfig } from './config/app.config';
 import { CategoriesModule } from './categories/categories.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { DebtsModule } from './debts/debts.module';
+import { SavingGoalsModule } from './saving-goals/saving-goals.module';
 
 @Module({
   imports: [
@@ -15,9 +17,12 @@ import { ExpensesModule } from './expenses/expenses.module';
     }),
     CategoriesModule,
     ExpensesModule,
+    DebtsModule,
+    SavingGoalsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
   exports: [PrismaService],
 })
 export class AppModule { }
+
