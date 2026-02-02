@@ -21,6 +21,11 @@ model Expense {
   ocrJobId      String? @db.Uuid
   isFromOcr     Boolean @default(false)
   ocrConfidence Float?
+  receiptUrl    String?  @db.Text
+  notes         String?  @db.Text
+  location      String?  @db.Text
+  paymentMethod String?  @default("cash") @db.Text
+  tags          String[] @default([])
 
   @@index([userId, spentAt])
   @@index([ocrJobId])
@@ -29,4 +34,35 @@ model Expense {
 model Category {
   slug String @id
   name String
+}
+
+model Debt {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String
+  person      String   // Người liên quan (nợ ai / ai nợ)
+  amount      Decimal  @db.Decimal(14, 2)
+  note        String?  @db.Text
+  type        String   // 'owe' = Tôi nợ, 'owed' = Người khác nợ tôi
+  dueDate     DateTime? @db.Date
+  isPaid      Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([userId])
+}
+
+model SavingGoal {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String
+  name          String   // Tên mục tiêu (VD: Mua laptop, Du lịch)
+  targetAmount  Decimal  @db.Decimal(14, 2)
+  currentAmount Decimal  @default(0) @db.Decimal(14, 2)
+  deadline      DateTime? @db.Date
+  icon          String?  // Icon identifier
+  color         String?  // Hex color
+  isCompleted   Boolean  @default(false)
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([userId])
 }

@@ -50,6 +50,13 @@ export class ExpensesController {
     return this.expensesService.remove(id, userId);
   }
 
+  @MessagePattern('expense.export')
+  async exportMicroservice(@Payload() payload: QueryExpenseDto & { userId: string }) {
+    const { userId, ...query } = payload;
+    const csv = await this.expensesService.exportCsv(query, userId);
+    return { csv };
+  }
+
   // Admin endpoints
   @MessagePattern('expense.admin_stats')
   async getAdminStats() {

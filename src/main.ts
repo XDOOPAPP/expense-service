@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { RpcExceptionFilter } from './common/filters/rpc-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -38,11 +39,26 @@ async function bootstrap() {
   // Global interceptor for response transformation
   app.useGlobalInterceptors(new TransformInterceptor());
 
+  // Global validation pipe with transformation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
   // Start all microservices
   await app.startAllMicroservices();
 
-  console.log('🚀 Expense Microservice is listening on RabbitMQ queues:');
-  console.log('   - expense_queue (API requests from gateway)');
-  console.log('   - ocr_events (OCR completed events)');
+  // Start HTTP server (if needed for health checks, etc.)
+  const port = process.env.PORT || 3010;
+  await app.listen(port);
+
+  console.log('🚀 Expense Microservice is listening on:');
+  console.log('   - RabbitMQ queue: expense_queue (API requests from gateway)');
+  console.log('   - RabbitMQ queue: ocr_events (OCR completed events)');
+  console.log(`   - HTTP port: ${port} (health checks, metrics)`);
 }
 bootstrap();

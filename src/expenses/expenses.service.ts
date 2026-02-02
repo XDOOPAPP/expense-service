@@ -31,6 +31,11 @@ export class ExpensesService {
         amount: createExpenseDto.amount,
         category: createExpenseDto.category,
         spentAt: new Date(createExpenseDto.spentAt),
+        receiptUrl: createExpenseDto.receiptUrl,
+        notes: createExpenseDto.notes,
+        location: createExpenseDto.location,
+        paymentMethod: createExpenseDto.paymentMethod,
+        tags: createExpenseDto.tags,
       },
     });
 
@@ -44,12 +49,26 @@ export class ExpensesService {
     data: Record<string, unknown>[];
     meta: Record<string, unknown>;
   }> {
-    const { from, to, category, page = 1, limit = 10 } = query;
+    const { from, to, category, search, minAmount, maxAmount } = query;
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
 
     // Build where clause
     const where: Prisma.ExpenseWhereInput = {
       userId,
       ...(category && { category }),
+      ...(search && {
+         OR: [
+            { description: { contains: search, mode: 'insensitive' } },
+            { category: { contains: search, mode: 'insensitive' } }
+         ]
+      }),
+      ...((minAmount !== undefined || maxAmount !== undefined) ? {
+          amount: {
+              ...(minAmount !== undefined && { gte: minAmount }),
+              ...(maxAmount !== undefined && { lte: maxAmount }),
+          }
+      } : {}),
       ...(from || to
         ? {
             spentAt: {
@@ -130,6 +149,21 @@ export class ExpensesService {
         ...(updateExpenseDto.spentAt && {
           spentAt: new Date(updateExpenseDto.spentAt),
         }),
+        ...(updateExpenseDto.receiptUrl !== undefined && {
+          receiptUrl: updateExpenseDto.receiptUrl,
+        }),
+        ...(updateExpenseDto.notes !== undefined && {
+          notes: updateExpenseDto.notes,
+        }),
+        ...(updateExpenseDto.location !== undefined && {
+          location: updateExpenseDto.location,
+        }),
+        ...(updateExpenseDto.paymentMethod !== undefined && {
+          paymentMethod: updateExpenseDto.paymentMethod,
+        }),
+        ...(updateExpenseDto.tags !== undefined && {
+          tags: updateExpenseDto.tags,
+        }),
       },
     });
 
@@ -153,11 +187,12 @@ export class ExpensesService {
     query: SummaryExpenseDto,
     userId: string,
   ): Promise<Record<string, unknown>> {
-    const { from, to, groupBy } = query;
+    const { from, to, groupBy, category } = query;
 
     // Build where clause
     const where: Prisma.ExpenseWhereInput = {
       userId,
+      ...(category && { category }),
       ...(from || to
         ? {
             spentAt: {
@@ -224,6 +259,38 @@ export class ExpensesService {
     }
 
     return result;
+  }
+
+  async exportCsv(query: QueryExpenseDto, userId: string): Promise<string> {
+    const { from, to, category } = query;
+    
+    const where: Prisma.ExpenseWhereInput = {
+      userId,
+      ...(category && { category }),
+      ...(from || to ? {
+          spentAt: {
+            ...(from && { gte: new Date(from) }),
+            ...(to && { lte: new Date(to) }),
+          }
+        } : {}),
+    };
+
+    const expenses = await this.prisma.expense.findMany({
+      where,
+      orderBy: { spentAt: 'desc' },
+    });
+
+    const header = 'Ngày,Mô tả,Danh mục,Số tiền\n';
+    const rows = expenses.map(e => {
+       const date = new Date(e.spentAt).toISOString().split('T')[0];
+       // Escape quotes in description to avoid CSV breaking
+       const desc = `"${(e.description || '').replace(/"/g, '""')}"`; 
+       const cat = e.category || 'Khác';
+       const amount = parseFloat(e.amount.toString()).toFixed(0);
+       return `${date},${desc},${cat},${amount}`;
+    }).join('\n');
+
+    return header + rows;
   }
 
   private groupByTimePeriod(

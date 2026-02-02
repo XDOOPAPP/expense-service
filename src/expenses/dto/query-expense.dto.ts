@@ -35,6 +35,30 @@ export class QueryExpenseDto {
   category?: string;
 
   @ApiPropertyOptional({
+    description: 'Search keyword in description',
+    example: 'coffee',
+  })
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @ApiPropertyOptional({
+    description: 'Minimum amount',
+    example: 10000,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  minAmount?: number;
+
+  @ApiPropertyOptional({
+    description: 'Maximum amount',
+    example: 500000,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  maxAmount?: number;
+
+  @ApiPropertyOptional({
     description: 'Page number for pagination',
     example: 1,
     minimum: 1,

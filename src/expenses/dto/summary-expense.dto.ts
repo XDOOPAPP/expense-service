@@ -33,4 +33,11 @@ export class SummaryExpenseDto {
   @IsOptional()
   @IsEnum(GroupByPeriod)
   groupBy?: GroupByPeriod;
+
+  @ApiPropertyOptional({
+    description: 'Filter expenses by category',
+    example: 'food',
+  })
+  @IsOptional()
+  category?: string;
 }
