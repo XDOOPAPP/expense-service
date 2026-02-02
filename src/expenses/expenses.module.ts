@@ -5,8 +5,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { OcrEventListener } from './ocr-event.listener';
 
 @Module({
-  controllers: [ExpensesController],
-  providers: [ExpensesService, PrismaService, OcrEventListener],
+  controllers: [ExpensesController, OcrEventListener],
+  providers: [ExpensesService, PrismaService],
   exports: [ExpensesService],
 })
 export class ExpensesModule { }
